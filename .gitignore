@@ -1,0 +1,17 @@
+# Local environments and generated files
+.DS_Store
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.swp
+*.o
+learning/c-linked-list/linkedlist
+.env
+.env.*
+token.txt
+*token*.txt
+*.pt
+*.pth
+*.safetensors
