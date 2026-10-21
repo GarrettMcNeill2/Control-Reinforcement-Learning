@@ -1,27 +1,21 @@
-# Research overview
+# Research notes
 
-## Question
+I wanted to test whether a small controller could improve legal issue spotting by choosing which SAE features to amplify. Keeping track of those choices also gave me a way to inspect what the controller was doing.
 
-Can a learned controller improve legal issue spotting by selecting SAE features to amplify during inference, while exposing which features it chose?
-
-The experiment notes propose comparing base and instruction-tuned models, then testing whether CRL can narrow the gap. They also propose cross-task evaluation. These are research goals, rather than demonstrated outcomes.
+My initial plan was to compare base and instruction-tuned models, then see whether CRL could close the gap. I also wanted to test how a controller trained on one task would perform on others.
 
 ## Implementation
 
-The main artifact is [CRL_Demo.ipynb](../research/CRL_Demo.ipynb). It loads `google/gemma-2-2b` with 4-bit quantization and a Gemma Scope residual SAE at layer 20 with a 16k feature dictionary. An actor and critic operate on the residual state. The actor selects a feature from those active on the current pass, and a forward hook injects its decoder direction into the final token's residual stream.
+[CRL_Demo.ipynb](../research/CRL_Demo.ipynb) loads `google/gemma-2-2b` in 4-bit precision and uses the Gemma Scope residual SAE for layer 20, with 16,384 features. The actor reads the residual state and selects an active feature. A forward hook adds that feature's decoder direction to the final token's residual stream.
 
-The controller uses reward from a constrained Yes/No prediction to update the policy and value function. It records feature choices and critic estimates, saves checkpoints, and evaluates periodically during training.
+The model can generate only Yes or No. A correct answer earns a reward of 1, and an incorrect answer earns 0. The controller uses these rewards to update the actor and critic. The notebook also saves checkpoints and records predictions, feature choices, and critic estimates during evaluation.
 
-## What the supplied artifacts demonstrate
+## What I observed
 
-- A substantially developed notebook with steering, policy updates, diagnostics, and saved training output.
-- A research progression from RL fundamentals to SAE steering and an applied evaluation design.
-- Two historical LegalBench prediction files with row-level model outputs, labels, and correctness flags.
+The saved evaluations show that the model answered Yes much more often than No. The controller also tended to select the same few features. The confusion matrices and feature counts made both patterns visible, even when the overall accuracy changed between evaluations.
 
-## Interpretation
+There is more work to do before attributing any improvement to steering. The earlier baseline runs use different models and prompts. A useful comparison would run the same model on the same questions with steering turned on and off, keeping the prompt and decoding settings fixed.
 
-Saved notebook evaluations show frequent positive predictions and concentrated selection of a small set of features. These diagnostics are useful for investigating class bias and policy concentration. They do not, by themselves, show that the selected features have the semantic meanings intended or that steering improves performance.
+The final 20% of the notebook's split is sampled repeatedly during training. A separate test set would be needed for a final evaluation. Feature IDs also need further investigation before drawing conclusions about what the selected directions represent.
 
-The notebook and baseline runs use different model identifiers and prompting. A credible improvement claim requires matched prompts, decoding, held-out examples, and a steering-off control. The notebook's final 20% partition is consulted repeatedly during training, so it functions as a development evaluation set rather than a pristine final test set.
-
-See [results](../results/README.md) for exact extracted values and [reproduction notes](REPRODUCTION.md) for limitations.
+[Saved results](../results/README.md) · [Setup and known issues](REPRODUCTION.md)

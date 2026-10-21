@@ -1,7 +1,5 @@
-# Files left out
+# Files omitted from the repository
 
-The source folders were read only. The repository copies research and learning materials without changing their bytes.
+The local virtual environment, OS files, editor swap file, and `Experiment/token.txt` are excluded. Model weights and Google Drive checkpoints are also absent.
 
-Excluded: the local `.venv/`, `.DS_Store` files, the editor swap file, and `Experiment/token.txt` (credential material). These remain in the original folder. No model weights or Drive checkpoints were supplied.
-
-The manifest records the source-relative path, repository path, and SHA-256 for every copied file. New documentation, analysis scripts, and result summaries are separate additions.
+The copied research files are listed in `source-manifest.json`, with their original relative paths and SHA-256 hashes.

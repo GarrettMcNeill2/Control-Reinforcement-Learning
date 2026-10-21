@@ -1,58 +1,44 @@
-# Interpretable LLM Steering with Reinforcement Learning
+# Control Reinforcement Learning
 
-**Garrett McNeill · Summer REU research portfolio**
+Garrett McNeill | Summer REU
 
-I explored whether a reinforcement learning controller could steer a language model by selecting interpretable sparse autoencoder (SAE) features. The main experiment targets binary legal issue spotting with Gemma 2 2B and LegalBench.
+This project explores steering a language model with reinforcement learning and sparse autoencoders (SAEs). I used Gemma 2 2B for legal issue spotting: given a passage, the model answers whether it raises a particular legal issue. A separate actor-critic controller chooses an SAE feature to amplify during the model's forward pass.
 
-The work combines a PyTorch actor–critic controller, transformer activation hooks, constrained decoding, checkpointing, and diagnostics for feature selection and model predictions.
+The main implementation is in [CRL_Demo.ipynb](research/CRL_Demo.ipynb). It includes the steering hook, policy updates, checkpointing, and evaluation logs through training step 4,000.
 
-## Start here
+## How it works
 
-| If you have… | Open | What you will see |
-| --- | --- | --- |
-| 2 minutes | [Research overview](docs/RESEARCH.md) | Question, implementation, and what the evidence supports |
-| 5 minutes | [Latest notebook](research/CRL_Demo.ipynb) | Controller implementation and saved training diagnostics |
-| 10 minutes | [Results](results/README.md) | Extracted notebook evaluations and historical baseline summaries |
-| A technical interview | [Architecture](docs/ARCHITECTURE.md) | How the intervention and policy update fit together |
-| Interest in the presentations | [Presentation guide](presentations/README.md) | RL foundations, CRL literature, and experiment planning |
+The actor reads the 2,304-dimensional residual state at layer 20 and produces scores for 16,384 SAE features. It chooses among features active on that pass, then adds the chosen feature's decoder direction to the last token's residual stream. A critic estimates the value of the state. The model's Yes/No answer supplies the reward for the controller's updates.
 
-## What I built
+I used a clipped policy objective with entropy regularization and logged prediction errors, critic estimates, and feature choices to see how the controller behaved during training.
 
-- An actor that maps the 2,304-dimensional residual state to logits over 16,384 SAE features, with a separate value critic.
-- A controller that masks feature choices to currently active SAE features and adds a selected decoder direction to the last token's residual stream at layer 20.
-- A clipped policy objective with entropy regularization, critic regression, buffered updates, and gradient clipping.
-- Evaluation and logging for binary predictions, confusion matrices, selected features, and critic values, plus Google Drive checkpoint save/load support.
+[Architecture and training settings](docs/ARCHITECTURE.md) · [Research notes](docs/RESEARCH.md)
 
-## Evidence and current status
+## Results
 
-The latest notebook contains saved evaluation logs through training step 4,000. These show a functioning experimental workflow in the saved session, but do not establish an improvement over an unsteered model. The historical baseline CSVs contain **650 predictions each**, under a different model/prompt setup.
+The saved evaluations show a strong tendency to answer Yes and to choose from a small group of features. They don't establish an accuracy gain from steering. The [results page](results/README.md) includes all 17 evaluations, along with summaries of two earlier baseline runs containing 650 predictions each. Those earlier runs used different models and prompts, so their scores aren't directly comparable to the controller's results.
 
-The supplied notebook depends on external task prompt files and Drive checkpoints. Its current source also contains an evaluation-call mismatch. Read [reproduction notes](docs/REPRODUCTION.md) before running it. No GPU training was rerun during repository preparation.
+## Running the code
 
-## Repository map
+The notebook was written for Colab with a CUDA GPU. It depends on task prompts and checkpoints stored in Google Drive that aren't included here. There are also a few issues to address before running it from a fresh session, including a missing argument in an evaluation call. See the [setup and known issues](docs/REPRODUCTION.md).
 
-```text
-research/          Latest notebook, historical prototype, and baseline artifacts
-presentations/     Original talks, experiment notes, and architecture PDFs
-results/           Reproducible summaries of supplied artifacts
-learning/          Python course exercises and C linked-list material
-tools/            Offline analysis and source-integrity verification
-docs/             Research narrative, architecture, provenance, and interview notes
-```
-
-## Inspect the results locally
-
-Python 3 is enough to regenerate the summaries; no model downloads or GPU are required:
+To regenerate the result tables from the saved files, only Python 3 is needed:
 
 ```bash
 python3 tools/summarize_results.py
-python3 tools/verify_sources.py
 ```
 
-The original notebooks, presentations, code, and CSVs are copied byte for byte. New documentation and analysis utilities were added for presentation. The earlier notebook remains in `research/archive/`.
+## Files
 
-## Attribution
+| Folder | Contents |
+| --- | --- |
+| `research/` | Latest notebook, earlier prototype, and baseline predictions |
+| `presentations/` | [RL and SAE talks](presentations/README.md), diagrams, and experiment notes |
+| `results/` | Evaluation tables generated from the saved output |
+| `learning/` | Python exercises and a C linked-list exercise from the start of the summer |
+| `tools/` | Scripts for summarizing results and checking file hashes |
+| `docs/` | Implementation details, setup notes, and sources |
 
-The CRL presentations discuss prior research; numerical results quoted from that literature are not results from this project. The historical benchmark script explicitly records AI assistance in its header. Google's Python exercise scaffolding and supplied solutions retain their Apache 2.0 license and notice. Learning materials are included as context, with no claim that third-party scaffolding or reference solutions are original research.
+The research files are unchanged from the originals. `python3 tools/verify_sources.py` checks them against the recorded hashes.
 
-See [provenance and rights](docs/PROVENANCE.md). No repository-wide license has been applied.
+The presentations cite earlier research, and the Python exercises retain Google's license and reference solutions. See [sources and attribution](docs/PROVENANCE.md) for details.

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Summarize supplied artifacts offline. Never execute research notebooks."""
+"""Build result tables from saved predictions and notebook output."""
 import csv
 import json
 import re
@@ -53,33 +53,33 @@ def main():
     write_csv(output/'historical-baselines.csv', baseline, list(baseline[0]))
     write_csv(output/'historical-baselines-by-task.csv', per_task, list(per_task[0]))
     write_csv(output/'notebook-evaluations.csv', evaluations, list(evaluations[0]))
-    lines = ['# Results from supplied artifacts', '',
-             'Generated offline with `python3 tools/summarize_results.py`. No model inference is performed.', '',
+    lines = ['# Results', '',
+             'These tables come from the saved notebook output and baseline CSVs. Rebuild them with `python3 tools/summarize_results.py`.', '',
              '## Latest notebook: saved training-time evaluations', '',
-             'Values below are recomputed from the confusion matrices in saved notebook output. '
-             'They are historical session evidence, not a fresh execution of the current source. '
+             'The values below come from the confusion matrices saved in the notebook. '
+             'The notebook has not been rerun to produce this table. '
              'Each evaluation samples 100 questions with replacement; the evaluated question mix can change. '
              'The always-Yes column is computed from the labels in each confusion matrix, not a separate model run.', '',
              '| Step | Accuracy | Always Yes | Predicted Yes | Selected features |',
              '| ---: | ---: | ---: | ---: | ---: |']
     for row in evaluations:
         lines.append(f"| {row['step']} | {row['accuracy']:.0%} | {row['always_yes_accuracy']:.0%} | {row['positive_prediction_rate']:.0%} | {row['selected_feature_count']} |")
-    lines += ['', 'The saved evaluations show positive-class bias and concentrated feature selection. '
-              'Accuracy alone should not be interpreted as learned steering benefit. '
+    lines += ['', 'The model usually answered Yes, and the controller selected from a small group of features. '
+              'These results do not establish an accuracy gain from steering. '
               'The notebook includes a later multi-checkpoint evaluation block, but it has no saved comparison output. '
-              'Detailed question logs and checkpoints from these runs were not supplied.', '',
+              'The question logs and checkpoints from these runs are missing.', '',
               '## Historical baseline prediction CSVs', '',
               '| File | Predictions | Observed tasks | Recorded accuracy |',
               '| --- | ---: | ---: | ---: |']
     for row in baseline:
         lines.append(f"| {row['artifact']} | {row['rows']} | {row['tasks']} | {row['recorded_accuracy']:.2%} |")
-    lines += ['', 'These are sums of the existing `is_correct` flags, which use substring scoring in the historical script. '
-              'They are not rescored exact-match accuracies or standardized LegalBench scores. '
+    lines += ['', 'Accuracy is the fraction of rows marked `is_correct` in each CSV. '
+              'The script uses substring matching rather than exact-match scoring. '
               'The script lists more tasks than appear in the CSVs and catches task-load failures; '
-              'only the observed rows are counted. The filenames suggest model variants but do not constitute complete run provenance.', '',
-              '**Do not compare these percentages directly with the latest notebook:** the model generation, prompts, '
-              'decoding, and sampled partitions differ. No improvement over baseline is claimed.', '',
-              'Machine-readable details: [notebook evaluations](notebook-evaluations.csv), '
+              'only the observed rows are counted. The filenames identify the model variants, but the full run settings were not saved.', '',
+              'The baseline runs and the latest notebook use different models, prompts, '
+              'decoding settings, and samples, so their scores cannot be compared directly.', '',
+              'CSV files: [notebook evaluations](notebook-evaluations.csv), '
               '[baseline summary](historical-baselines.csv), '
               '[baseline task breakdown](historical-baselines-by-task.csv).', '']
     (output/'README.md').write_text('\n'.join(lines))

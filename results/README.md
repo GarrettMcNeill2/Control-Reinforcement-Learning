@@ -1,10 +1,10 @@
-# Results from supplied artifacts
+# Results
 
-Generated offline with `python3 tools/summarize_results.py`. No model inference is performed.
+These tables come from the saved notebook output and baseline CSVs. Rebuild them with `python3 tools/summarize_results.py`.
 
 ## Latest notebook: saved training-time evaluations
 
-Values below are recomputed from the confusion matrices in saved notebook output. They are historical session evidence, not a fresh execution of the current source. Each evaluation samples 100 questions with replacement; the evaluated question mix can change. The always-Yes column is computed from the labels in each confusion matrix, not a separate model run.
+The values below come from the confusion matrices saved in the notebook. The notebook has not been rerun to produce this table. Each evaluation samples 100 questions with replacement; the evaluated question mix can change. The always-Yes column is computed from the labels in each confusion matrix, not a separate model run.
 
 | Step | Accuracy | Always Yes | Predicted Yes | Selected features |
 | ---: | ---: | ---: | ---: | ---: |
@@ -26,7 +26,7 @@ Values below are recomputed from the confusion matrices in saved notebook output
 | 3750 | 42% | 44% | 96% | 5 |
 | 4000 | 52% | 53% | 93% | 6 |
 
-The saved evaluations show positive-class bias and concentrated feature selection. Accuracy alone should not be interpreted as learned steering benefit. The notebook includes a later multi-checkpoint evaluation block, but it has no saved comparison output. Detailed question logs and checkpoints from these runs were not supplied.
+The model usually answered Yes, and the controller selected from a small group of features. These results do not establish an accuracy gain from steering. The notebook includes a later multi-checkpoint evaluation block, but it has no saved comparison output. The question logs and checkpoints from these runs are missing.
 
 ## Historical baseline prediction CSVs
 
@@ -35,8 +35,8 @@ The saved evaluations show positive-class bias and concentrated feature selectio
 | gemma2b_it_lb_issue_spotting_results.csv | 650 | 13 | 90.15% |
 | gemma2b_lb_issue_spotting_results.csv | 650 | 13 | 70.31% |
 
-These are sums of the existing `is_correct` flags, which use substring scoring in the historical script. They are not rescored exact-match accuracies or standardized LegalBench scores. The script lists more tasks than appear in the CSVs and catches task-load failures; only the observed rows are counted. The filenames suggest model variants but do not constitute complete run provenance.
+Accuracy is the fraction of rows marked `is_correct` in each CSV. The script uses substring matching rather than exact-match scoring. The script lists more tasks than appear in the CSVs and catches task-load failures; only the observed rows are counted. The filenames identify the model variants, but the full run settings were not saved.
 
-**Do not compare these percentages directly with the latest notebook:** the model generation, prompts, decoding, and sampled partitions differ. No improvement over baseline is claimed.
+The baseline runs and the latest notebook use different models, prompts, decoding settings, and samples, so their scores cannot be compared directly.
 
-Machine-readable details: [notebook evaluations](notebook-evaluations.csv), [baseline summary](historical-baselines.csv), [baseline task breakdown](historical-baselines-by-task.csv).
+CSV files: [notebook evaluations](notebook-evaluations.csv), [baseline summary](historical-baselines.csv), [baseline task breakdown](historical-baselines-by-task.csv).

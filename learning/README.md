@@ -1,8 +1,6 @@
-# Learning archive
+# Early exercises
 
-These materials provide context for the summer's preparation. The research notebook and presentations are the primary portfolio artifacts.
+These are the Python and C exercises from the start of the summer.
 
-- `google-python-exercises/`: original Google course material, reference solutions, and working exercise files, retained with license and notice. Completion varies. `basic/string1.py` and `basic/list1.py` contain implementations; other files retain placeholders. Supplied solutions are explicitly kept in their original `solution/` directories.
-- `c-linked-list/`: C list scaffold and original Makefile. The program inserts and prints one record; several extensions remain commented out or unimplemented.
-
-The archive is preserved without repairs or claims that every exercise is complete.
+- `google-python-exercises/` contains Google's course files, my working copies, and the provided reference solutions. Some exercises are unfinished. The original license and notice are included.
+- `c-linked-list/` contains a linked-list exercise and Makefile. It inserts and prints one record. The other operations remain commented out or unfinished.

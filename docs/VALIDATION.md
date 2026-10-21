@@ -1,12 +1,7 @@
-# Packaging validation
+# Repository checks
 
-Completed during repository preparation:
+The 56 copied research and exercise files match the SHA-256 hashes recorded in `source-manifest.json`. The hashes were also checked against the original files when this repository was created.
 
-- All 56 copied artifacts match the packaging manifest's SHA-256 checksums.
-- Those checksums were also compared directly with the original supplied files after packaging.
-- All local Markdown links resolve.
-- New Python utilities and Python notebook cells parse without executing research code (notebook magics excluded from syntax parsing).
-- Offline summaries regenerate successfully: 17 saved notebook evaluation records and 1,300 historical baseline prediction rows across two files.
-- Copied text/code/notebooks were checked for common Hugging Face, GitHub, and API credential patterns; no matches were found. `token.txt`, the local virtual environment, and editor/OS debris were excluded.
+The summary script reads 17 saved notebook evaluations and 1,300 baseline predictions. Local documentation links and Python syntax were checked. Notebook syntax checks skip installation magics and don't execute the cells.
 
-This validates packaging and extraction. It does not validate GPU runtime compatibility or reproduce model training. External prompts and checkpoints were not available. Original files were read only, with no content changes.
+Training hasn't been rerun as part of these checks. The external prompts and checkpoints are missing, and the GPU setup still needs verification. See [known issues](REPRODUCTION.md).
