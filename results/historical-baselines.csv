@@ -1,3 +1,0 @@
-artifact,rows,tasks,recorded_correct,recorded_accuracy
-gemma2b_it_lb_issue_spotting_results.csv,650,13,586,0.901538
-gemma2b_lb_issue_spotting_results.csv,650,13,457,0.703077

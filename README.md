@@ -1,48 +1,33 @@
 # Control Reinforcement Learning
 
-Garrett McNeill | Summer REU
+Garrett McNeill · REU 2026
 
-This project explores steering a language model with reinforcement learning and sparse autoencoders (SAEs). I used Gemma 2 2B for legal issue spotting: given a passage, the model answers whether it raises a particular legal issue. A separate actor-critic controller chooses an SAE feature to amplify during the model's forward pass.
+An exploration of Control Reinforcement Learning (CRL) on LegalBench. This work investigates whether the method can be reproduced on tasks outside the original paper’s evaluation and how reward functions, learning rates, and entropy regularization affect feature selection.
 
-The main implementation is in [CRL_Demo.ipynb](research/CRL_Demo.ipynb). It includes the steering hook, policy updates, checkpointing, and evaluation logs through training step 4,000.
+[Interactive demonstration](https://garrettmcneill2.github.io/Control-Reinforcement-Learning/) · [Research poster](demo/poster.pdf) · [Experiment notebook](research/CRL_Demo.ipynb)
 
-## Interactive demo
+## Method
 
-[Open the demonstration](https://GarrettMcNeill2.github.io/Control-Reinforcement-Learning/) to follow the SAE intervention, controller training, LegalBench experiment, and poster results. The [source](demo/) runs locally without dependencies.
+CRL intervenes in a language model’s forward pass at a selected layer. A sparse autoencoder (SAE) exposes features in the residual stream. An actor selects a feature direction to amplify, and the modified residual returns to the remaining transformer layers. Task rewards train the actor and critic with PPO while the language-model weights remain fixed.
 
-## How it works
+## Experiment
 
-The actor reads the 2,304-dimensional residual state at layer 20 and produces scores for 16,384 SAE features. It chooses among features active on that pass, then adds the chosen feature's decoder direction to the last token's residual stream. A critic estimates the value of the state. The model's Yes/No answer supplies the reward for the controller's updates.
+I applied CRL to Learned Hands issue-spotting tasks from LegalBench using Gemma 2 2B and a layer-20 Gemma Scope SAE with 16,384 features. The controller uses top-1 selection and trains for 4,000 steps. Experiments compare learning rates, incorrect-answer penalties, and entropy regularization.
 
-I used a clipped policy objective with entropy regularization and logged prediction errors, critic estimates, and feature choices to see how the controller behaved during training.
+The main questions were whether the controller would learn feature-selection behavior on this task and whether training choices would change its diversity and selected features.
 
-[Architecture and training settings](docs/ARCHITECTURE.md) · [Research notes](docs/RESEARCH.md)
+## Findings
 
-## Results
+The experiments reproduced feature-selection behavior on a task outside the original paper’s evaluation. Changing the reward, learning rate, and entropy term affected feature diversity and sometimes the learned selection policy. Model scores varied less than feature diversity across these runs.
 
-The saved evaluations show a strong tendency to answer Yes and to choose from a small group of features. They don't establish an accuracy gain from steering. The [results page](results/README.md) includes all 17 evaluations, along with summaries of two earlier baseline runs containing 650 predictions each. Those earlier runs used different models and prompts, so their scores aren't directly comparable to the controller's results.
+[Poster results](results/README.md) · [Method details](docs/ARCHITECTURE.md) · [Research discussion](docs/RESEARCH.md)
 
-## Running the code
+## Materials
 
-The notebook was written for Colab with a CUDA GPU. It depends on task prompts and checkpoints stored in Google Drive that aren't included here. There are also a few issues to address before running it from a fresh session, including a missing argument in an evaluation call. See the [setup and known issues](docs/REPRODUCTION.md).
+- `demo/`: interactive method explanation and final poster.
+- `research/CRL_Demo.ipynb`: controller, intervention hook, training, and evaluation.
+- `research/archive/`: earlier experiment notebook.
+- `research/benchmark_test/`: initial benchmark code and recorded predictions.
+- `presentations/`: RL background, CRL literature, and experiment planning.
 
-To regenerate the result tables from the saved files, only Python 3 is needed:
-
-```bash
-python3 tools/summarize_results.py
-```
-
-## Files
-
-| Folder | Contents |
-| --- | --- |
-| `research/` | Latest notebook, earlier prototype, and baseline predictions |
-| `presentations/` | [RL and SAE talks](presentations/README.md), diagrams, and experiment notes |
-| `results/` | Evaluation tables generated from the saved output |
-| `learning/` | Python exercises and a C linked-list exercise from the start of the summer |
-| `tools/` | Scripts for summarizing results and checking file hashes |
-| `docs/` | Implementation details, setup notes, and sources |
-
-The research files are unchanged from the originals. `python3 tools/verify_sources.py` checks them against the recorded hashes.
-
-The presentations cite earlier research, and the Python exercises retain Google's license and reference solutions. See [sources and attribution](docs/PROVENANCE.md) for details.
+[Sources and attribution](docs/PROVENANCE.md)

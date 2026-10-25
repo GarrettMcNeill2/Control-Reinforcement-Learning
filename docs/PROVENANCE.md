@@ -1,15 +1,13 @@
 # Sources and attribution
 
-The latest experiment is `research/CRL_Demo.ipynb`. The earlier notebook, presentations, baseline files, and exercises are retained alongside it. The research files haven't been edited during organization of this repository.
+The experiment notebook is `research/CRL_Demo.ipynb`. The final poster credits Garrett McNeill, Kyle Spurlock, Nicholas Johnson, and Olfa Nasraoui, and acknowledges NSF grant CNS-2349076.
 
-`source-manifest.json` lists the original relative paths and SHA-256 hashes. The README, documentation, and summary scripts were added when the work was organized for this repository.
+The poster cites:
 
-## References and other material
+- Bricken et al. (2023), *Towards Monosemanticity: Decomposing Language Models With Dictionary Learning*.
+- Cho, Wu, and Koshiyama (2026), *Control Reinforcement Learning: Interpretable Token-Level Steering of LLMs via Sparse Autoencoder Features*, arXiv:2602.10437.
+- Huben et al. (2024), *Sparse Autoencoders Find Highly Interpretable Features in Language Models*, ICLR.
 
-- The CRL presentations summarize a research paper cited in the slides. Its reported results belong to that paper.
-- The earlier benchmark script retains its original note about AI assistance.
-- Google's Python exercises include starter code and reference answers in the `solution/` folders. Their Apache 2.0 license and notice are included.
-- The C linked-list exercise includes starter code and unfinished student tasks.
-- The baseline CSVs contain LegalBench/Learned Hands examples, which remain subject to the dataset's terms.
+The method demonstration follows the poster’s conceptual “Hello” and French-feature example. The experiment and results sections describe the LegalBench study.
 
-There is no repository-wide license. Existing third-party licenses and notices still apply.
+The initial benchmark script retains its original assistance note. Benchmark CSVs contain LegalBench/Learned Hands examples, subject to their upstream terms.

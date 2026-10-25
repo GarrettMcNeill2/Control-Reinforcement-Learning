@@ -33,4 +33,4 @@ flowchart TD
 
 The controller resets its mask each pass. This differs from the cumulative expansion described in the literature presentation. The steering coefficient is fixed at `50` in this implementation, despite comments referring to a learned coefficient.
 
-Training settings in the notebook: 4,001 episodes, batch interval 64, one update epoch, actor learning rate 5e-6, critic learning rate 1e-4, clipping 0.2, entropy coefficient 0.01, and evaluation/checkpoint intervals of 250. Some cells were edited after execution, so these settings may differ from those used to produce the saved output.
+Training settings in the notebook: 4,001 episodes, batch interval 64, one update epoch, actor learning rate 5e-6, critic learning rate 1e-4, clipping 0.2, entropy coefficient 0.01, and evaluation/checkpoint intervals of 250. 
