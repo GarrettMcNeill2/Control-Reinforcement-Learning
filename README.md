@@ -6,6 +6,10 @@ This project explores steering a language model with reinforcement learning and 
 
 The main implementation is in [CRL_Demo.ipynb](research/CRL_Demo.ipynb). It includes the steering hook, policy updates, checkpointing, and evaluation logs through training step 4,000.
 
+## Interactive demo
+
+[Open the demonstration](https://GarrettMcNeill2.github.io/Control-Reinforcement-Learning/) to follow the SAE intervention, controller training, LegalBench experiment, and poster results. The [source](demo/) runs locally without dependencies.
+
 ## How it works
 
 The actor reads the 2,304-dimensional residual state at layer 20 and produces scores for 16,384 SAE features. It chooses among features active on that pass, then adds the chosen feature's decoder direction to the last token's residual stream. A critic estimates the value of the state. The model's Yes/No answer supplies the reward for the controller's updates.
